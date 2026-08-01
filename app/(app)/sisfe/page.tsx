@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 type ListResponse = { items: SisfeExpediente[]; total: number; page: number; pages: number }
-const SISFE_EXTENSION_VERSION = "0.8.0"
+const SISFE_EXTENSION_VERSION = "0.9.0"
 
 const date = (value: string | null, withTime = false) => value
   ? new Date(value).toLocaleString("es-AR", withTime ? { dateStyle: "short", timeStyle: "short" } : { dateStyle: "short" })

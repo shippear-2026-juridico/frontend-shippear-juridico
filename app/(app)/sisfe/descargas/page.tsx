@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, CloudDownload, Clock3, Search, Star } from "lucide-react"
+import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, CloudDownload, Clock3, ExternalLink, Search, Star } from "lucide-react"
 import { api, queryString } from "@/lib/api"
 import type { SisfeDocumentQueue } from "@/lib/types"
 import { PageHeader } from "@/components/page-header"
@@ -31,6 +31,14 @@ const bytes = (value: number | null) => {
 
 const date = (value: string) => new Date(value).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })
 
+const officialUrl = (document: SisfeDocumentQueue["items"][number]) => {
+  const path = document.source === "CARGO" && document.movement?.sisfeId
+    ? `/documentos-adjuntos/${document.movement.sisfeId}/${document.expediente.sisfeId}`
+    : `/detalle-expediente/${document.expediente.sisfeId}`
+  const params = new URLSearchParams({ roxium_autodownload: "1", roxium_autorun: "1", roxium_source: document.source, roxium_external_id: document.externalId })
+  return `https://sisfe.justiciasantafe.gov.ar${path}?${params}`
+}
+
 export default function SisfeDownloadsPage() {
   const [filter, setFilter] = useState<QueueFilter>("ALL")
   const [search, setSearch] = useState("")
@@ -48,8 +56,10 @@ export default function SisfeDownloadsPage() {
       eyebrow="Documentos de SISFE"
       title="Cola de descargas"
       description="Seguimiento en tiempo real de los documentos detectados, pendientes y guardados en Roxium."
-      actions={<Link href="/sisfe" className={buttonVariants({ variant: "outline" })}>Volver a SISFE</Link>}
+      actions={<div className="flex flex-wrap gap-2">{queue.data?.nextPending ? <a href={officialUrl(queue.data.nextPending)} target="_blank" rel="noreferrer" className={buttonVariants()}><ExternalLink /> Continuar con el próximo</a> : null}<Link href="/sisfe" className={buttonVariants({ variant: "outline" })}>Volver a SISFE</Link></div>}
     />
+
+    {stats?.pending ? <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950"><p className="font-medium">La cola está esperando autorización en SISFE</p><p className="mt-1 text-amber-800">SISFE no permite descargar estos PDFs automáticamente. Usá “Continuar con el próximo” y presioná el clip oficial; la extensión guardará el archivo y esta cola avanzará sola.</p></div> : null}
 
     <Card className="mb-5 overflow-hidden border-blue-200 bg-gradient-to-br from-blue-950 to-blue-800 text-white">
       <CardContent className="grid gap-6 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -82,7 +92,7 @@ export default function SisfeDownloadsPage() {
           const failed = !available && Boolean(document.lastError)
           return <div key={document.id} className="grid min-w-0 gap-3 p-4 transition-colors hover:bg-muted/30 lg:grid-cols-[minmax(0,1fr)_160px_150px] lg:items-center">
             <div className="flex min-w-0 gap-3"><span className={`mt-0.5 grid size-9 shrink-0 place-items-center rounded-lg ${available ? "bg-emerald-50 text-emerald-700" : failed ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"}`}>{available ? <CheckCircle2 className="size-4" /> : failed ? <AlertTriangle className="size-4" /> : <CloudDownload className="size-4" />}</span><div className="min-w-0"><div className="flex min-w-0 flex-wrap items-center gap-2"><p className="max-w-full truncate text-sm font-medium">{document.fileName}</p>{document.prioritized ? <Badge className="gap-1 bg-violet-100 text-violet-800"><Star className="size-3 fill-current" /> Prioritario</Badge> : null}</div><Link href={`/sisfe/${document.expediente.id}`} className="mt-1 block truncate text-xs text-blue-700 hover:underline">{document.expediente.cuij || document.expediente.numero} · {document.expediente.caratula}</Link>{document.lastError ? <p className="mt-1 line-clamp-1 text-xs text-red-700">{document.lastError}</p> : null}</div></div>
-            <div><Badge variant={available ? "secondary" : "outline"} className={available ? "bg-emerald-50 text-emerald-700" : failed ? "border-red-200 text-red-700" : "border-amber-200 text-amber-700"}>{available ? "Disponible" : failed ? "Reintento pendiente" : "En cola"}</Badge><p className="mt-1 text-xs text-muted-foreground">{bytes(document.byteSize)} · {document.attempts} intentos</p></div>
+            <div><Badge variant={available ? "secondary" : "outline"} className={available ? "bg-emerald-50 text-emerald-700" : failed ? "border-red-200 text-red-700" : "border-amber-200 text-amber-700"}>{available ? "Disponible" : failed ? "Reintento pendiente" : "En cola"}</Badge><p className="mt-1 text-xs text-muted-foreground">{bytes(document.byteSize)} · {document.attempts} intentos</p>{!available ? <a href={officialUrl(document)} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:underline"><ExternalLink className="size-3" /> Autorizar en SISFE</a> : null}</div>
             <p className="text-xs text-muted-foreground lg:text-right">Actualizado<br />{date(document.updatedAt)}</p>
           </div>
         }) : <div className="grid min-h-56 place-items-center p-6 text-center"><div><CloudDownload className="mx-auto size-8 text-muted-foreground" /><p className="mt-3 text-sm font-medium">No hay documentos en esta vista</p><p className="mt-1 text-xs text-muted-foreground">Probá otro filtro o término de búsqueda.</p></div></div>}
