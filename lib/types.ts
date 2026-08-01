@@ -59,3 +59,69 @@ export type CaseInput = {
   note?: string
   driveUrl?: string
 }
+
+export type SisfeSyncRun = {
+  id: string
+  status: "RUNNING" | "SUCCESS" | "PARTIAL" | "FAILED" | "NEEDS_LOGIN"
+  startedAt: string
+  finishedAt: string | null
+  foundCount: number
+  syncedCount: number
+  changedCount: number
+  movementCount: number
+  errorCount: number
+  errorMessage: string | null
+}
+
+export type SisfeStatus = {
+  connected: boolean
+  expiresAt: string | null
+  lastValidatedAt: string | null
+  total: number
+  lastRun: SisfeSyncRun | null
+}
+
+export type SisfeExpediente = {
+  id: string
+  legalCaseId: string | null
+  sisfeId: string
+  cuij: string | null
+  numero: string
+  caratula: string
+  fechaInicio: string | null
+  fechaActualizacion: string | null
+  radicacion: string | null
+  ubicacion: string | null
+  localidad: string | null
+  visible: string | null
+  digital: boolean
+  lastSeenAt: string
+  lastSyncedAt: string
+  createdAt: string
+  updatedAt: string
+  _count?: { movements: number; snapshots: number }
+}
+
+export type SisfeMovement = {
+  id: string
+  sisfeId: string | null
+  fecha: string | null
+  tipo: string | null
+  descripcion: string | null
+  firstSeenAt: string
+  lastSeenAt: string
+}
+
+export type SisfeSnapshot = {
+  id: string
+  ubicacion: string
+  radicacion: string
+  actualizadoEn: string
+  createdAt: string
+}
+
+export type SisfeExpedienteDetail = SisfeExpediente & {
+  movements: SisfeMovement[]
+  snapshots: SisfeSnapshot[]
+  legalCase: { id: string; title: string } | null
+}

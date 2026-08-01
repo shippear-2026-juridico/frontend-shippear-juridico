@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, CalendarDays, FolderKanban, LayoutDashboard, LogOut, Scale, Search } from "lucide-react"
+import { Bell, CalendarDays, FolderKanban, LayoutDashboard, LogOut, RefreshCw, Scale, Search } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ import {
 const navigation = [
   { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
   { href: "/causas", label: "Causas", icon: FolderKanban },
+  { href: "/sisfe", label: "SISFE", icon: RefreshCw },
   { href: "/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/alertas", label: "Alertas", icon: Bell },
 ]
