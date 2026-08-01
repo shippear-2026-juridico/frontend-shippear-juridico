@@ -99,7 +99,7 @@ export type SisfeExpediente = {
   lastSyncedAt: string
   createdAt: string
   updatedAt: string
-  _count?: { movements: number; snapshots: number }
+  _count?: { movements: number; snapshots: number; documents: number }
 }
 
 export type SisfeMovement = {
@@ -120,8 +120,24 @@ export type SisfeSnapshot = {
   createdAt: string
 }
 
+export type SisfeDocument = {
+  id: string
+  movementId: string | null
+  source: "ACTUACION" | "CARGO"
+  externalId: string
+  fileName: string
+  mimeType: string
+  byteSize: number
+  sha256: string
+  fecha: string | null
+  observacion: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export type SisfeExpedienteDetail = SisfeExpediente & {
   movements: SisfeMovement[]
   snapshots: SisfeSnapshot[]
+  documents: SisfeDocument[]
   legalCase: { id: string; title: string } | null
 }

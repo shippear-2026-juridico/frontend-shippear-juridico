@@ -1,5 +1,7 @@
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/$/, "")
 
+export const apiUrl = (path: string) => `${API_URL}${path}`
+
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
     super(message)
