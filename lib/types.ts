@@ -140,6 +140,21 @@ export type SisfeDocument = {
   updatedAt: string
 }
 
+export type SisfeDocumentQueueItem = Pick<SisfeDocument,
+  "id" | "source" | "status" | "externalId" | "fileName" | "mimeType" | "byteSize" |
+  "attempts" | "lastError" | "prioritized" | "createdAt" | "updatedAt"
+> & {
+  expediente: { id: string; cuij: string | null; numero: string; caratula: string }
+}
+
+export type SisfeDocumentQueue = {
+  items: SisfeDocumentQueueItem[]
+  total: number
+  page: number
+  pages: number
+  stats: { total: number; available: number; pending: number; errors: number; prioritized: number; percentage: number }
+}
+
 export type SisfeExpedienteDetail = SisfeExpediente & {
   movements: SisfeMovement[]
   snapshots: SisfeSnapshot[]

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, CalendarDays, FolderKanban, LayoutDashboard, LogOut, RefreshCw, Scale, Search } from "lucide-react"
+import { Bell, CalendarDays, CloudDownload, FolderKanban, LayoutDashboard, LogOut, RefreshCw, Scale, Search } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,7 @@ const navigation = [
   { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
   { href: "/causas", label: "Causas", icon: FolderKanban },
   { href: "/sisfe", label: "SISFE", icon: RefreshCw },
+  { href: "/sisfe/descargas", label: "Descargas SISFE", icon: CloudDownload },
   { href: "/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/alertas", label: "Alertas", icon: Bell },
 ]
@@ -38,7 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <SidebarGroup>
             <SidebarGroupLabel>Navegacion</SidebarGroupLabel>
             <SidebarGroupContent><SidebarMenu>{navigation.map((item) => (
-              <SidebarMenuItem key={item.href}><SidebarMenuButton render={<Link href={item.href} />} isActive={pathname.startsWith(item.href)} tooltip={item.label}><item.icon /><span>{item.label}</span></SidebarMenuButton></SidebarMenuItem>
+              <SidebarMenuItem key={item.href}><SidebarMenuButton render={<Link href={item.href} />} isActive={item.href === "/sisfe" ? pathname === "/sisfe" || /^\/sisfe\/[^/]+$/.test(pathname) : pathname.startsWith(item.href)} tooltip={item.label}><item.icon /><span>{item.label}</span></SidebarMenuButton></SidebarMenuItem>
             ))}</SidebarMenu></SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>

@@ -3,20 +3,20 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { AlertCircle, Cable, ChevronLeft, ChevronRight, Clock3, Download, Info, Paperclip, RefreshCw, Search, ShieldCheck } from "lucide-react"
+import { AlertCircle, Cable, ChevronLeft, ChevronRight, Clock3, CloudDownload, Download, Info, Paperclip, RefreshCw, Search, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 import { api, queryString } from "@/lib/api"
 import type { SisfeExpediente, SisfeStatus, SisfeSyncRun } from "@/lib/types"
 import { PageHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 type ListResponse = { items: SisfeExpediente[]; total: number; page: number; pages: number }
-const SISFE_EXTENSION_VERSION = "0.6.0"
+const SISFE_EXTENSION_VERSION = "0.8.0"
 
 const date = (value: string | null, withTime = false) => value
   ? new Date(value).toLocaleString("es-AR", withTime ? { dateStyle: "short", timeStyle: "short" } : { dateStyle: "short" })
@@ -88,7 +88,7 @@ export default function SisfePage() {
         eyebrow="Poder Judicial de Santa Fe"
         title="Sincronización SISFE"
         description="Expedientes accesibles para la matrícula en Rosario, importados como información de solo lectura."
-        actions={<Button onClick={() => connect.mutate()} disabled={connect.isPending || isRunning}><Cable />{connect.isPending ? "Abriendo..." : "Conectar y actualizar"}</Button>}
+        actions={<div className="flex flex-wrap gap-2"><Link href="/sisfe/descargas" className={buttonVariants({ variant: "outline" })}><CloudDownload /> Ver descargas</Link><Button onClick={() => connect.mutate()} disabled={connect.isPending || isRunning}><Cable />{connect.isPending ? "Abriendo..." : "Conectar y actualizar"}</Button></div>}
       />
 
       <div className="mb-5 grid gap-3 md:grid-cols-3">
