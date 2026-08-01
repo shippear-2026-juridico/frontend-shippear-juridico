@@ -1,26 +1,16 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+:root { --background: #f5f7f4; --foreground: #0f172a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--foreground); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .55; }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .label { @apply mt-7 mb-2 block text-sm font-medium text-slate-700; }
+  .input { @apply h-13 w-full rounded-xl border border-slate-200 bg-white px-4 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100; }
+  .button-primary { @apply mt-5 h-13 w-full rounded-xl bg-slate-950 px-5 font-medium text-white transition hover:bg-emerald-800; }
+  .button-secondary { @apply h-12 w-full rounded-xl border border-slate-200 bg-white px-5 font-medium transition hover:bg-slate-50; }
+  .error { @apply mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700; }
 }
