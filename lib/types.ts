@@ -124,13 +124,18 @@ export type SisfeDocument = {
   id: string
   movementId: string | null
   source: "ACTUACION" | "CARGO"
+  status: "PENDING" | "AVAILABLE"
   externalId: string
   fileName: string
   mimeType: string
-  byteSize: number
-  sha256: string
+  byteSize: number | null
+  sha256: string | null
   fecha: string | null
   observacion: string | null
+  attempts: number
+  lastError: string | null
+  prioritized: boolean
+  prioritizedAt: string | null
   createdAt: string
   updatedAt: string
 }

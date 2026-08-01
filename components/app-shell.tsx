@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const signOut = async () => { await logout(); router.replace("/") }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="overflow-x-hidden">
       <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader className="p-4">
           <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
@@ -50,12 +50,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="bg-stone-50/70">
+      <SidebarInset className="min-w-0 overflow-x-hidden bg-stone-50/70">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur md:px-6">
           <SidebarTrigger />
           <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex"><Search className="size-3.5" /> Usa la busqueda de causas para encontrar expedientes, personas o delitos.</div>
         </header>
-        <div className="flex-1 p-4 md:p-7">{children}</div>
+        <div className="min-w-0 flex-1 overflow-x-hidden p-4 md:p-7">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   )

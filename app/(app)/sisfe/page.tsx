@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { AlertCircle, Cable, ChevronLeft, ChevronRight, Clock3, Download, Paperclip, RefreshCw, Search, ShieldCheck } from "lucide-react"
+import { AlertCircle, Cable, ChevronLeft, ChevronRight, Clock3, Download, Info, Paperclip, RefreshCw, Search, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 import { api, queryString } from "@/lib/api"
 import type { SisfeExpediente, SisfeStatus, SisfeSyncRun } from "@/lib/types"
@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 type ListResponse = { items: SisfeExpediente[]; total: number; page: number; pages: number }
+const SISFE_EXTENSION_VERSION = "0.6.0"
 
 const date = (value: string | null, withTime = false) => value
   ? new Date(value).toLocaleString("es-AR", withTime ? { dateStyle: "short", timeStyle: "short" } : { dateStyle: "short" })
@@ -66,8 +67,10 @@ export default function SisfePage() {
     const connection = params.get("connection")
     if (connection === "success") {
       const documents = params.get("documents")
+      const unchanged = Number(params.get("unchanged") || 0)
+      const pendingDocuments = Number(params.get("pendingDocuments") || 0)
       const documentErrors = Number(params.get("documentErrors") || 0)
-      toast.success(`${params.get("count") ?? "Los"} expedientes actualizados${documents ? ` · ${documents} adjuntos guardados` : ""}${documentErrors ? ` · ${documentErrors} adjuntos pendientes` : ""}`)
+      toast.success(`${params.get("count") ?? "Los"} expedientes actualizados${unchanged ? ` · ${unchanged} sin cambios omitidos` : ""}${documents ? ` · ${documents} adjuntos disponibles` : ""}${pendingDocuments ? ` · ${pendingDocuments} pendientes en cola` : ""}${documentErrors ? ` · ${documentErrors} intentos bloqueados` : ""}`)
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: ["sisfe-status"] }),
         queryClient.invalidateQueries({ queryKey: ["sisfe-expedientes"] }),
@@ -94,9 +97,9 @@ export default function SisfePage() {
         <Card><CardContent className="flex items-start gap-3 p-5"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-700"><Clock3 /></span><div><p className="text-xs text-muted-foreground">Expedientes importados</p><p className="mt-1 text-2xl font-semibold">{current?.total ?? 0}</p><p className="mt-1 text-xs text-muted-foreground">Actualización automática diaria a las 07:00.</p></div></CardContent></Card>
       </div>
 
-      <div className="mb-5 flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-medium">Conector de navegador requerido una sola vez</p><p className="mt-1 text-blue-800">Permite abrir SISFE desde esta pantalla, capturar la sesión después del CAPTCHA y leer los expedientes desde tu computadora. No guarda matrícula ni contraseña.</p></div><a href="/sisfe-browser-connector.zip" download className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border border-blue-300 bg-white px-4 text-sm font-medium hover:bg-blue-100"><Download className="size-4" /> Descargar conector</a></div>
+      <div className="mb-5 flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-medium">Extensión de navegador requerida una sola vez</p><p className="mt-1 text-blue-800">Permite abrir SISFE desde esta pantalla, capturar la sesión después del CAPTCHA y leer sólo los expedientes nuevos o modificados. No guarda matrícula ni contraseña.</p></div><div className="flex shrink-0 flex-wrap gap-2"><Button variant="outline" size="sm" className="border-blue-300 bg-white hover:bg-blue-100" onClick={() => toast.info(`Versión publicada de la extensión: ${SISFE_EXTENSION_VERSION}`)}><Info /> v{SISFE_EXTENSION_VERSION}</Button><a href="/sisfe-browser-extension.zip" download className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-blue-300 bg-white px-4 text-sm font-medium hover:bg-blue-100"><Download className="size-4" /> Descargar extensión</a></div></div>
 
-      {!current?.connected && !status.isLoading ? <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950"><p className="font-medium">Hace falta renovar la sesión de SISFE</p><p className="mt-1 text-amber-800">Presioná “Conectar y actualizar”, completá matrícula, contraseña y CAPTCHA en la pestaña oficial. El conector vuelve automáticamente con los expedientes importados.</p></div> : null}
+      {!current?.connected && !status.isLoading ? <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950"><p className="font-medium">Hace falta renovar la sesión de SISFE</p><p className="mt-1 text-amber-800">Presioná “Conectar y actualizar”, completá matrícula, contraseña y CAPTCHA en la pestaña oficial. La extensión vuelve automáticamente con los expedientes importados.</p></div> : null}
 
       {current?.lastRun?.errorMessage ? <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900"><p className="font-medium">La última sincronización informó un error</p><p className="mt-1">{current.lastRun.errorMessage}</p></div> : null}
 
