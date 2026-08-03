@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, CloudDownload, Clock3, ExternalLink, Search, Star } from "lucide-react"
+import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, CloudDownload, Clock3, Database, ExternalLink, Search, Star } from "lucide-react"
 import { api, queryString } from "@/lib/api"
 import type { SisfeDocumentQueue } from "@/lib/types"
 import { PageHeader } from "@/components/page-header"
@@ -23,10 +23,11 @@ const filters: Array<{ value: QueueFilter; label: string }> = [
   { value: "ERROR", label: "Con error" },
 ]
 
-const bytes = (value: number | null) => {
-  if (!value) return "—"
+const bytes = (value: number | null, fallback = "—") => {
+  if (!value) return fallback
   if (value < 1024 * 1024) return `${Math.ceil(value / 1024)} KB`
-  return `${(value / 1024 / 1024).toFixed(1)} MB`
+  if (value < 1024 * 1024 * 1024) return `${(value / 1024 / 1024).toFixed(1)} MB`
+  return `${(value / 1024 / 1024 / 1024).toFixed(2)} GB`
 }
 
 const date = (value: string) => new Date(value).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })
@@ -66,7 +67,8 @@ export default function SisfeDownloadsPage() {
         <div className="min-w-0">
           <div className="flex items-end justify-between gap-4"><div><p className="text-sm text-blue-100">Progreso global</p><p className="mt-1 text-3xl font-semibold tracking-tight">{stats?.percentage ?? 0}% completado</p></div><p className="shrink-0 text-sm text-blue-100">{stats?.available ?? 0} de {stats?.total ?? 0}</p></div>
           <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-emerald-400 transition-[width] duration-500" style={{ width: `${stats?.percentage ?? 0}%` }} /></div>
-          <p className="mt-3 text-xs text-blue-100">La pantalla se actualiza automáticamente cada cinco segundos mientras permanece abierta.</p>
+          <p className="mt-3 text-xs text-blue-100">{bytes(stats?.storedBytes ?? 0, "0 KB")} guardados en la base{stats?.pending ? ` · proyección ~${bytes(stats.estimatedTotalBytes, "0 KB")} al completar la cola` : ""}</p>
+          <p className="mt-1 text-xs text-blue-100">La pantalla se actualiza automáticamente cada cinco segundos mientras permanece abierta.</p>
         </div>
         <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-4 lg:grid-cols-2">
           <div className="rounded-xl bg-white/10 px-5 py-3"><p className="text-2xl font-semibold">{stats?.pending ?? 0}</p><p className="text-xs text-blue-100">Pendientes</p></div>
@@ -75,10 +77,11 @@ export default function SisfeDownloadsPage() {
       </CardContent>
     </Card>
 
-    <div className="mb-5 grid gap-3 sm:grid-cols-3">
+    <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <Card><CardContent className="flex items-center gap-3 p-5"><span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><CheckCircle2 /></span><div><p className="text-2xl font-semibold">{stats?.available ?? 0}</p><p className="text-xs text-muted-foreground">Disponibles en Roxium</p></div></CardContent></Card>
       <Card><CardContent className="flex items-center gap-3 p-5"><span className="grid size-10 place-items-center rounded-xl bg-amber-50 text-amber-700"><Clock3 /></span><div><p className="text-2xl font-semibold">{stats?.pending ?? 0}</p><p className="text-xs text-muted-foreground">Esperando descarga</p></div></CardContent></Card>
       <Card><CardContent className="flex items-center gap-3 p-5"><span className="grid size-10 place-items-center rounded-xl bg-red-50 text-red-700"><AlertTriangle /></span><div><p className="text-2xl font-semibold">{stats?.errors ?? 0}</p><p className="text-xs text-muted-foreground">Intentos con error</p></div></CardContent></Card>
+      <Card><CardContent className="flex items-center gap-3 p-5"><span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-700"><Database /></span><div className="min-w-0"><p className="text-2xl font-semibold">{bytes(stats?.storedBytes ?? 0, "0 KB")}</p><p className="text-xs text-muted-foreground">Ocupado en la base{stats?.averageBytes ? ` · ${bytes(stats.averageBytes)} promedio` : ""}</p></div></CardContent></Card>
     </div>
 
     <Card className="min-w-0 overflow-hidden"><CardContent className="p-0">

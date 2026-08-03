@@ -153,7 +153,17 @@ export type SisfeDocumentQueue = {
   total: number
   page: number
   pages: number
-  stats: { total: number; available: number; pending: number; errors: number; prioritized: number; percentage: number }
+  stats: {
+    total: number
+    available: number
+    pending: number
+    errors: number
+    prioritized: number
+    percentage: number
+    storedBytes: number
+    averageBytes: number
+    estimatedTotalBytes: number
+  }
   nextPending: SisfeDocumentQueueItem | null
 }
 
