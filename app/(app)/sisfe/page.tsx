@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 type ListResponse = { items: SisfeExpediente[]; total: number; page: number; pages: number }
-const SISFE_EXTENSION_VERSION = "0.9.3"
+const SISFE_EXTENSION_VERSION = "0.10.0"
 
 const date = (value: string | null, withTime = false) => value
   ? new Date(value).toLocaleString("es-AR", withTime ? { dateStyle: "short", timeStyle: "short" } : { dateStyle: "short" })
@@ -97,7 +97,7 @@ export default function SisfePage() {
         <Card><CardContent className="flex items-start gap-3 p-5"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-700"><Clock3 /></span><div><p className="text-xs text-muted-foreground">Expedientes importados</p><p className="mt-1 text-2xl font-semibold">{current?.total ?? 0}</p><p className="mt-1 text-xs text-muted-foreground">Actualización automática diaria a las 07:00.</p></div></CardContent></Card>
       </div>
 
-      <div className="mb-5 flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-medium">Extensión de navegador requerida una sola vez</p><p className="mt-1 text-blue-800">Permite abrir SISFE desde esta pantalla, capturar la sesión después del CAPTCHA y leer sólo los expedientes nuevos o modificados. No guarda matrícula ni contraseña.</p></div><div className="flex shrink-0 flex-wrap gap-2"><Button variant="outline" size="sm" className="border-blue-300 bg-white hover:bg-blue-100" onClick={() => toast.info(`Versión publicada de la extensión: ${SISFE_EXTENSION_VERSION}`)}><Info /> v{SISFE_EXTENSION_VERSION}</Button><a href="/sisfe-browser-extension.zip" download className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-blue-300 bg-white px-4 text-sm font-medium hover:bg-blue-100"><Download className="size-4" /> Descargar extensión</a></div></div>
+      <div className="mb-5 flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-medium">Extensión de navegador requerida una sola vez</p><p className="mt-1 text-blue-800">Permite abrir SISFE desde esta pantalla, capturar la sesión después del CAPTCHA y leer sólo los expedientes nuevos o modificados. No guarda matrícula ni contraseña.</p></div><div className="flex shrink-0 flex-wrap gap-2"><Button variant="outline" size="sm" className="border-blue-300 bg-white hover:bg-blue-100" onClick={() => toast.info(`Versión publicada de la extensión: ${SISFE_EXTENSION_VERSION}`)}><Info /> v{SISFE_EXTENSION_VERSION}</Button><a href={`/sisfe-browser-extension.zip?v=${SISFE_EXTENSION_VERSION}`} download className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-blue-300 bg-white px-4 text-sm font-medium hover:bg-blue-100"><Download className="size-4" /> Descargar extensión</a></div></div>
 
       {!current?.connected && !status.isLoading ? <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950"><p className="font-medium">Hace falta renovar la sesión de SISFE</p><p className="mt-1 text-amber-800">Presioná “Conectar y actualizar”, completá matrícula, contraseña y CAPTCHA en la pestaña oficial. La extensión vuelve automáticamente con los expedientes importados.</p></div> : null}
 
