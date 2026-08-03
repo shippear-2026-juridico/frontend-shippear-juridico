@@ -89,7 +89,7 @@ export default function SisfeDetailPage() {
                 {document.observacion ? <p className="mt-1 line-clamp-2 break-words text-xs text-muted-foreground [overflow-wrap:anywhere]">{document.observacion}</p> : null}
               </div>
               {document.status === "AVAILABLE" ? <div className="flex shrink-0 flex-wrap gap-2"><Button variant="outline" size="sm" onClick={() => setViewingDocument(document)}><Eye /> Ver</Button><a href={apiUrl(`/api/sisfe/documents/${document.id}/download`)} className={buttonVariants({ variant: "outline", size: "sm" })}><Download /> Descargar</a></div> : <div className="flex shrink-0 flex-wrap gap-2"><Button variant={document.prioritized ? "secondary" : "outline"} size="sm" disabled={priority.isPending && priority.variables?.id === document.id} onClick={() => priority.mutate(document)}><Star className={document.prioritized ? "fill-current" : ""} /> {document.prioritized ? "Quitar prioridad" : "Priorizar"}</Button><a href={officialUrl(document)} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline", size: "sm" })}><ExternalLink /> Abrir en SISFE</a></div>}
-            </div>)}</div> : <p className="py-8 text-center text-sm text-muted-foreground">Todavía no se registraron adjuntos. Ejecutá nuevamente “Conectar y actualizar” con la extensión 0.10.0.</p>}
+            </div>)}</div> : <p className="py-8 text-center text-sm text-muted-foreground">Todavía no se registraron adjuntos. Ejecutá nuevamente “Conectar y actualizar” con la extensión 0.11.0.</p>}
           </CardContent>
         </Card>
 
